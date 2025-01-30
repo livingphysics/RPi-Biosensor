@@ -23,55 +23,55 @@ d = u3.U3()
 i2c_bus = board.I2C()
 ina219 = INA219(i2c_bus)
 
-out_file = open('data/temperature_training_1.txt', 'w')
+out_file = open('data/temperature_training_4.txt', 'w')
 title = ['current', 'tube_out', 'tube_in', 'flask_1', 'flask_2']
 out_file.write(','.join(title) + '\n')
 
 initialize_gpio()
 peltier = PWM_Motor(24, 25, 1000)
 def peltier_modulation():
-	for i in range(180):
+	for i in range(90):
 		# 900s run, current step decrease (100 to 10)
-		peltier.run(100 - i // 2, forward=True)
-		time.sleep(5)
-	for i in range(180):
-		# 900s run, current step decrease (10 to 100)
-		peltier.run(100 - i // 2, forward=False)
-		time.sleep(5)
+		peltier.run(100 - i, forward=True)
+		time.sleep(500)
+	# for i in range(180):
+		# # 900s run, current step decrease (10 to 100)
+		# peltier.run(100 - i // 2, forward=False)
+		# time.sleep(5)
 		
-	time.sleep(1800)
+	# time.sleep(1800)
 	
-	for i in range(180):
-		# 1800s run, current step increase (10 to 100)
-		peltier.run(10 + i // 2, forward=True)
-		time.sleep(10)
-	for i in range(180):
-		# 1800s run, current step increase (10 to 100)
-		peltier.run(10 + i // 2, forward=False)
-		time.sleep(10)
+	# for i in range(180):
+		# # 1800s run, current step increase (10 to 100)
+		# peltier.run(10 + i // 2, forward=True)
+		# time.sleep(10)
+	# for i in range(180):
+		# # 1800s run, current step increase (10 to 100)
+		# peltier.run(10 + i // 2, forward=False)
+		# time.sleep(10)
 		
-	time.sleep(1800)
+	# time.sleep(1800)
 	
-	for i in range(180):
-		# 1800s run, constant forward current
-		peltier.run(50, forward=True)
-		time.sleep(10)
-	for i in range(180):
-		# 1800s run, constant reverse current
-		peltier.run(50, forward=False)
-		time.sleep(10)
-	for i in range(360):
-		# 1800s run, constant forward current
-		peltier.run(20, forward=True)
-		time.sleep(5)
-	for i in range(360):
-		# 1800s run, constant reverse current
-		peltier.run(20, forward=False)
-		time.sleep(5)
+	# for i in range(180):
+		# # 1800s run, constant forward current
+		# peltier.run(50, forward=True)
+		# time.sleep(10)
+	# for i in range(180):
+		# # 1800s run, constant reverse current
+		# peltier.run(50, forward=False)
+		# time.sleep(10)
+	# for i in range(360):
+		# # 1800s run, constant forward current
+		# peltier.run(20, forward=True)
+		# time.sleep(5)
+	# for i in range(360):
+		# # 1800s run, constant reverse current
+		# peltier.run(20, forward=False)
+		# time.sleep(5)
 		
-	time.sleep(1800)
+	# time.sleep(1800)
 	
-duration = 18000
+duration = 45000
 start = time.time()
 heating_thread = threading.Thread(target=peltier_modulation)
 heating_thread.start()
