@@ -16,7 +16,7 @@ pixels[0] = (255,0,0)
 
 pixels.fill((0,255,0))	
 pixels.show()
-time.sleep(2)` 
+time.sleep(2) 
 pixels.fill((255,0,0))	
 pixels.show()
 time.sleep(2)
