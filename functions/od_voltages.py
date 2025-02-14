@@ -6,7 +6,7 @@ import adafruit_ads7830.ads7830 as ADS_2
 import time
 
 i2c = busio.I2C(board.SCL,board.SDA)
-adc1 = ADS.ADS1115(address=0x48, i2c=i2c)
+adc1 = ADS.ADS1115(address=0x49, i2c=i2c)
 
 channels = [AnalogIn(adc1,ADS.P0),AnalogIn(adc1,ADS.P1),
 AnalogIn(adc1,ADS.P2),AnalogIn(adc1,ADS.P3)]
