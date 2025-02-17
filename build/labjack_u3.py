@@ -2,6 +2,7 @@ import u3
 import time
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+# Real time theremometer readings 
 
 inputs = [0, 1, 2, 3]
 gain = [3.15,3.15,1,1] 
