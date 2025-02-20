@@ -1,69 +1,51 @@
 import time
+from typing import List, Tuple
 from tqdm import tqdm
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
+from matplotlib.figure import Figure
+from matplotlib.axes import Axes
+from matplotlib.lines import Line2D
 from bioreactor import Bioreactor
-from utils import measure_and_write_sensor_data, create_csv_writer
+from utils import (measure_and_write_sensor_data, create_csv_writer, 
+                  setup_sensor_plot, update_sensor_plot)
 
 # Initialize the bioreactor
-bioreactor = Bioreactor()
+bioreactor: Bioreactor = Bioreactor()
 
 # Script start...
-duration = 259200 #72 hrs
+duration: int = 259200  # 72 hrs
 
 # Prepare data storage for plotting
-times = []
-# create empty lists to store lists of points to plot against time
-vials = [[] for _ in range(5)]
+times: List[float] = []
+sensor_data: List[List[float]] = [[] for _ in range(30)]
 
 # Set up the plot
-plt.ion()  # Turn on interactive mode
-fig, ax1 = plt.subplots(figsize=(10, 6))
-live_vials = [ax1.plot([], [], label=f'Vial {i+1}')[0] for i in range(5)]
+fig: Figure
+ax: Axes
+live_plots: List[Line2D]
+leg: plt.Legend
+fig, ax, live_plots, leg = setup_sensor_plot()
 
-ax1.set_xlabel('Time (s)')
-ax1.set_ylabel('Pressure (Vials) (mBar)')
-ax1.tick_params(axis='y', labelcolor='r')
-
-ax1.tick_params(axis='y', labelcolor='b')
-
-plt.title('Real-time Pressure Data')
-ax1.legend(loc='upper left')
-
-# Function to update the plot
-def update_plot():
-    for i, line in enumerate(live_vials):
-        line.set_data(times, vials[i])
-    
-    ax1.relim()
-    ax1.autoscale_view()
-    
-    fig.canvas.draw()
-    fig.canvas.flush_events()
-
-# Open CSV file with DictWriter
+# Main data collection loop
 with open('data/250130_yeast_w303_0.1xypd.csv', 'w', newline='') as csvfile, tqdm(total=duration, desc="Processing: ") as pbar:
     writer = create_csv_writer(csvfile)
-    start = time.time()
+    start: float = time.time()
     
-    elapsed = time.time() - start
+    elapsed: float = time.time() - start
     while elapsed <= duration + 1:
         pbar.update(elapsed - pbar.n)
-        measurement_start = time.time()
+        measurement_start: float = time.time()
         
-        data_row = measure_and_write_sensor_data(bioreactor, writer, elapsed, csvfile)
+        data_row: List[float] = measure_and_write_sensor_data(bioreactor, writer, elapsed, csvfile)
         
-        # Update plot
+        # Update plot data
         times.append(elapsed)
-        for i in range(4):
-            vials[i].append(data_row[f'int_press{i+1}'])
-        vials[4].append(data_row['atm_press'])
-        update_plot()
+        update_sensor_plot(fig, ax, live_plots, times, sensor_data, data_row)
         
         # sets interval between measurements
-        interval = 30
-        measurement_end = time.time()
-        measurement_time = measurement_end - measurement_start
+        interval: int = 30
+        measurement_end: float = time.time()
+        measurement_time: float = measurement_end - measurement_start
         time.sleep(interval - measurement_time)
 
         elapsed = time.time() - start
