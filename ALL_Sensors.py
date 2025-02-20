@@ -51,11 +51,12 @@ out_temp_sensors = np.array(DS18B20.get_all_sensors())
 out_temp_sensors = out_temp_sensors[order]
  
 # Script start...
-duration = 259200 #72 hrs
+duration = 600
+# duration = 259200 #72 hrs
 # duration = 43200 #12 hrs
 # duration = 86400 #24 hrs
 
-out_file = open('data/250130_yeast_w303_0.1xypd.txt','w')
+out_file = open('data/250220_new_od_pd_amp.txt','w')
 string = """time t(s) T_{env} P_{env} T1_{ext} T2_{ext} T3_{ext} T4_{ext} 
 T1 T2 T3 T4 P1 P2 P3 P4 H1 H2 H3 H4
 Turb1_{180} Turb2_{180} Turb3_{180} Turb4_{180}
