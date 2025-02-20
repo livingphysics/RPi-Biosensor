@@ -23,7 +23,7 @@ sensor_data: List[List[float]] = [[] for _ in range(30)]
 fig: Figure
 ax: Axes
 live_plots: List[Line2D]
-leg: plt.Legend
+leg: plt.legend
 fig, ax, live_plots, leg = setup_sensor_plot()
 
 # Main data collection loop

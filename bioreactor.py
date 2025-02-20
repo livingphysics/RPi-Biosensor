@@ -7,7 +7,7 @@ from adafruit_ads1x15.analog_in import AnalogIn
 import adafruit_ads7830.ads7830 as ADS_2
 from adafruit_bme280 import basic as adafruit_bme280
 import numpy as np
-import DS18B20
+from ds18b20 import DS18B20
 import logging
 from config import BioreactorConfig as cfg
 import RPi.GPIO as IO
@@ -56,7 +56,7 @@ class Bioreactor():
         if self.board_mode == 'BOARD':
             IO.setmode(IO.BOARD)
         elif self.board_mode == 'BCM':
-            self.pin = cfg.bcm[self.pin]
+            self.pin = cfg.BCM_MAP[self.pin]
             IO.setmode(IO.BCM)
         else:
             raise ValueError("Invalid board mode: use 'BCM' or 'BOARD'")
@@ -99,7 +99,7 @@ class Bioreactor():
     
     def init_atm_temp_press(self) -> None:
         """Initialize the atmospheric temperature and pressure sensors"""
-        self.atm_temp_sensor: adafruit_bme280.Adafruit_BME280_I2C = (
+        self.atm_sensor: adafruit_bme280.Adafruit_BME280_I2C = (
             adafruit_bme280.Adafruit_BME280_I2C(
                 self.i2c, 
                 cfg.BME280_ATM_ADDRESS
@@ -119,93 +119,93 @@ class Bioreactor():
         IO.output(self.pin, 0)
         IO.cleanup()
 
-    def get_led_ref(self) -> List[Union[float, str]]:
+    def get_led_ref(self) -> List[float]:
         """Get the LED reference voltage readings"""
         try:
             return [ch.voltage for ch in self.channels_1]
         except OSError as e:
             logging.error(f"Hardware error reading LED reference voltages: {e}")
-            return ['NaN'] * len(self.channels_1)
+            return [float('nan')] * len(self.channels_1)
         except Exception as e:
             logging.error(f"Unexpected error reading LED reference voltages: {e}")
-            return ['NaN'] * len(self.channels_1)
+            return [float('nan')] * len(self.channels_1)
 
-    def get_opt_dens(self) -> List[Union[float, str]]:
+    def get_opt_dens(self) -> List[float]:
         """Get the optical density readings from deflected beams"""
         try:
             return [self.adc_2.read(i) * self.REF / 65535.0 for i in range(8)]
         except OSError as e:
             logging.error(f"Hardware error reading optical density: {e}")
-            return ['NaN'] * 8
+            return [float('nan')] * 8
         except Exception as e:
             logging.error(f"Unexpected error reading optical density: {e}")
-            return ['NaN'] * 8
+            return [float('nan')] * 8
     
-    def get_int_temp(self) -> List[Union[float, str]]:
+    def get_int_temp(self) -> List[float]:
         """Get the internal temperature readings"""
         try:
             return [sensor.temperature for sensor in self.int_sensors]
         except OSError as e:
             logging.error(f"Hardware error reading internal temperature: {e}")
-            return ['NaN'] * len(self.int_sensors)
+            return [float('nan')] * len(self.int_sensors)
         except Exception as e:
             logging.error(f"Unexpected error reading internal temperature: {e}")
-            return ['NaN'] * len(self.int_sensors)
+            return [float('nan')] * len(self.int_sensors)
 
-    def get_int_press(self) -> List[Union[float, str]]:
+    def get_int_press(self) -> List[float]:
         """Get the internal pressure readings"""
         try:
             return [sensor.pressure for sensor in self.int_sensors]
         except OSError as e:
             logging.error(f"Hardware error reading internal pressure: {e}")
-            return ['NaN'] * len(self.int_sensors)
+            return [float('nan')] * len(self.int_sensors)
         except Exception as e:
             logging.error(f"Unexpected error reading internal pressure: {e}")
-            return ['NaN'] * len(self.int_sensors)
+            return [float('nan')] * len(self.int_sensors)
     
-    def get_int_humid(self) -> List[Union[float, str]]:
+    def get_int_humid(self) -> List[float]:
         """Get the internal humidity readings"""
         try:
             return [sensor.humidity for sensor in self.int_sensors]
         except OSError as e:
             logging.error(f"Hardware error reading internal humidity: {e}")
-            return ['NaN'] * len(self.int_sensors)
+            return [float('nan')] * len(self.int_sensors)
         except Exception as e:
             logging.error(f"Unexpected error reading internal humidity: {e}")
-            return ['NaN'] * len(self.int_sensors)
+            return [float('nan')] * len(self.int_sensors)
     
-    def get_ext_temp(self) -> Union[np.ndarray, List[str]]:
+    def get_ext_temp(self) -> List[float]:
         """Get the external temperature readings"""
         try:
-            return self.ext_sensors.temperature
+            return [ext_sensor.get_temperature() for ext_sensor in self.ext_sensors]
         except OSError as e:
             logging.error(f"Hardware error reading external temperature: {e}")
-            return ['NaN'] * len(self.ext_sensors)
+            return [float('nan')] * len(self.ext_sensors)
         except Exception as e:
             logging.error(f"Unexpected error reading external temperature: {e}")
-            return ['NaN'] * len(self.ext_sensors)
+            return [float('nan')] * len(self.ext_sensors)
     
-    def get_atm_temp(self) -> Union[float, str]:
+    def get_atm_temp(self) -> float:
         """Get the atmospheric temperature reading"""
         try:
-            return self.atm_temp_sensor.temperature
+            return self.atm_sensor.temperature
         except OSError as e:
             logging.error(f"Hardware error reading atmospheric temperature: {e}")
-            return 'NaN'
+            return float('nan')
         except Exception as e:
             logging.error(f"Unexpected error reading atmospheric temperature: {e}")
-            return 'NaN'
+            return float('nan')
 
-    def get_atm_press(self) -> Union[float, str]:
+    def get_atm_press(self) -> float:
         """Get the atmospheric pressure reading"""
         try:
-            return self.atm_temp_sensor.pressure
+            return self.atm_sensor.pressure
         except OSError as e:
             logging.error(f"Hardware error reading atmospheric pressure: {e}")
-            return 'NaN'
+            return float('nan')
         except Exception as e:
             logging.error(f"Unexpected error reading atmospheric pressure: {e}")
-            return 'NaN'
+            return float('nan')
 
     @contextmanager
     def led_context(self, settle_time: float = 1.0):

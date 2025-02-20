@@ -99,18 +99,18 @@ def setup_sensor_plot() -> Tuple[Figure, List[Axes], List[Line2D], Legend]:
     fig = plt.figure(figsize=(12, 10))
     
     # Create 4 subplots
-    axes = []
+    axes: List[Axes] = []
     # Temperature subplot (internal, external, atmospheric)
-    ax_temp = fig.add_subplot(411)
+    ax_temp: Axes = fig.add_subplot(411)
     # Pressure subplot (internal, atmospheric)
-    ax_press = fig.add_subplot(412)
+    ax_press: Axes = fig.add_subplot(412)
     # Optical measurements subplot (optical density and LED reference)
-    ax_opt = fig.add_subplot(413)
+    ax_opt: Axes = fig.add_subplot(413)
     # Humidity subplot (all internal humidity sensors)
-    ax_humid = fig.add_subplot(414)
+    ax_humid: Axes = fig.add_subplot(414)
     
     axes = [ax_temp, ax_press, ax_opt, ax_humid]
-    live_plots = []
+    live_plots: List[Line2D] = []
 
     # Temperature plots
     for i in range(4):
@@ -170,7 +170,7 @@ def setup_sensor_plot() -> Tuple[Figure, List[Axes], List[Line2D], Legend]:
         legline.set_picker(True)  # Enable picking on the legend lines
         legline.set_pickradius(5)  # Define pick radius
 
-    def on_pick(event):
+    def on_pick(event: Any) -> None:
         legline = event.artist
         origline = live_plots[leg.get_lines().index(legline)]
         visible = not origline.get_visible()
