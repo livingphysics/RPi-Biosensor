@@ -29,3 +29,8 @@ class BioreactorConfig:
     # Logging Configuration
     LOG_LEVEL: str = 'INFO'
     LOG_FORMAT: str = '%(asctime)s - %(levelname)s - %(message)s'
+
+    # Stirrer Configuration
+    STIRRER_PIN: int = 35
+    STIRRER_SPEED: int = 1000
+    DUTY_CYCLE: int = 15

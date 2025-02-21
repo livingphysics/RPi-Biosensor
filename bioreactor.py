@@ -33,6 +33,7 @@ class Bioreactor():
         try:
             self.init_stream()
             self.init_leds()
+            self.init_stirrer()
             self.init_optical_density()
             self.init_int_temp_humid_press()
             self.init_ext_temp()
@@ -62,6 +63,13 @@ class Bioreactor():
             raise ValueError("Invalid board mode: use 'BCM' or 'BOARD'")
         IO.setup(self.pin, IO.OUT)
         IO.output(self.pin, 0)
+    
+    def init_stirrer(self) -> None:
+        """Initialize the stirrer"""
+        IO.setup(cfg.STIRRER_PIN, IO.OUT)
+        self.stirrer = IO.PWM(cfg.STIRRER_PIN, cfg.STIRRER_SPEED)
+        self.stirrer.start(0)
+        self.stirrer.ChangeDutyCycle(cfg.DUTY_CYCLE)
     
     def init_optical_density(self) -> None:
         """Initialize the optical density sensors"""
@@ -117,6 +125,7 @@ class Bioreactor():
     def finish(self) -> None:
         """Clean up LED resources"""
         IO.output(self.pin, 0)
+        self.stirrer.stop(0)
         IO.cleanup()
 
     def get_led_ref(self) -> List[float]:
