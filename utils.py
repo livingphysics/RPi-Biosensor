@@ -100,14 +100,17 @@ def setup_sensor_plot() -> Tuple[Figure, List[Axes], List[Line2D], Legend]:
     
     # Create 4 subplots
     axes: List[Axes] = []
+    # Adjust the width ratio between the plot and legend area
+    gs = plt.GridSpec(4, 2, width_ratios=[3, 1])  # 3:1 ratio between plot and legend
+    
     # Temperature subplot (internal, external, atmospheric)
-    ax_temp: Axes = fig.add_subplot(411)
+    ax_temp: Axes = fig.add_subplot(gs[0, 0])
     # Pressure subplot (internal, atmospheric)
-    ax_press: Axes = fig.add_subplot(412)
+    ax_press: Axes = fig.add_subplot(gs[1, 0])
     # Optical measurements subplot (optical density and LED reference)
-    ax_opt: Axes = fig.add_subplot(413)
+    ax_opt: Axes = fig.add_subplot(gs[2, 0])
     # Humidity subplot (all internal humidity sensors)
-    ax_humid: Axes = fig.add_subplot(414)
+    ax_humid: Axes = fig.add_subplot(gs[3, 0])
     
     axes = [ax_temp, ax_press, ax_opt, ax_humid]
     live_plots: List[Line2D] = []
@@ -152,10 +155,9 @@ def setup_sensor_plot() -> Tuple[Figure, List[Axes], List[Line2D], Legend]:
     ax_humid.grid(True)
 
     # Adjust layout to prevent overlap
-    plt.tight_layout()
+    # plt.tight_layout()  # Remove this line
 
     # Create legend and make it clickable
-    # Place legend to the right of the subplots
     lines = []
     labels = []
     for ax in axes:
@@ -164,24 +166,32 @@ def setup_sensor_plot() -> Tuple[Figure, List[Axes], List[Line2D], Legend]:
         labels.extend(ax_labels)
     
     leg = fig.legend(lines, labels, loc='center left', 
-                    bbox_to_anchor=(1.0, 0.5))
-    
-    for legline in leg.get_lines():
-        legline.set_picker(True)  # Enable picking on the legend lines
-        legline.set_pickradius(5)  # Define pick radius
+                    bbox_to_anchor=(1.02, 0.5))
+
+    # Enhanced legend interactivity
+    lined = dict()  # Will map legend lines to plot lines
+    for legline, origline in zip(leg.get_lines(), live_plots):
+        legline.set_picker(5)  # 5 points tolerance
+        lined[legline] = origline
 
     def on_pick(event: Any) -> None:
+        # Get the legend line that was clicked
         legline = event.artist
-        origline = live_plots[leg.get_lines().index(legline)]
+        # Get the corresponding plot line
+        origline = lined[legline]
+        # Toggle visibility
         visible = not origline.get_visible()
         origline.set_visible(visible)
-        # Change alpha of legend item
+        # Change the legend line's alpha
         legline.set_alpha(1.0 if visible else 0.2)
-        fig.canvas.draw()
+        fig.canvas.draw_idle()
 
     fig.canvas.mpl_connect('pick_event', on_pick)
     
     plt.title('Real-time Sensor Data')
+    
+    # Adjust the subplot parameters to give specified padding
+    plt.subplots_adjust(right=0.85)  # Leave room for the legend
     
     return fig, axes, live_plots, leg
 
