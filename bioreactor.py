@@ -13,7 +13,7 @@ from config import BioreactorConfig as cfg
 import RPi.GPIO as IO
 from contextlib import contextmanager
 import time
-
+import neopixel
 
 # Configure logging using config
 logging.basicConfig(
@@ -34,6 +34,7 @@ class Bioreactor():
             self.init_stream()
             self.init_leds()
             self.init_stirrer()
+            self.init_ring_light()
             self.init_optical_density()
             self.init_int_temp_humid_press()
             self.init_ext_temp()
@@ -70,6 +71,12 @@ class Bioreactor():
         self.stirrer = IO.PWM(cfg.STIRRER_PIN, cfg.STIRRER_SPEED)
         self.stirrer.start(0)
         self.stirrer.ChangeDutyCycle(cfg.DUTY_CYCLE)
+    
+    def init_ring_light(self) -> None:
+        """Initialize the ring light"""
+        self.ring_light = neopixel.NeoPixel(board.D10, cfg.RING_LIGHT_COUNT, brightness=cfg.RING_LIGHT_BRIGHTNESS, auto_write=False)
+        self.ring_light[0] = (255,0,0)
+        self.ring_light.show()
     
     def init_optical_density(self) -> None:
         """Initialize the optical density sensors"""
@@ -121,6 +128,14 @@ class Bioreactor():
     def led_off(self) -> None:
         """Turn off the LED"""
         IO.output(self.pin, 0)
+    
+    def change_ring_light(self, color: Tuple[int, int, int], pixel: Optional[int] = None) -> None:
+        """Change the color of the ring light"""
+        if pixel is None:
+            self.ring_light.fill(color)
+        else:
+            self.ring_light[pixel] = color
+        self.ring_light.show()
 
     def finish(self) -> None:
         """Clean up LED resources"""

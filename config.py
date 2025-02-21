@@ -34,3 +34,7 @@ class BioreactorConfig:
     STIRRER_PIN: int = 35
     STIRRER_SPEED: int = 1000
     DUTY_CYCLE: int = 15
+
+    # Ring Light Configuration
+    RING_LIGHT_COUNT: int = 32
+    RING_LIGHT_BRIGHTNESS: float = 0.2
