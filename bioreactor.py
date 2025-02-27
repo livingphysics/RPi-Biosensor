@@ -75,8 +75,7 @@ class Bioreactor():
     def init_ring_light(self) -> None:
         """Initialize the ring light"""
         self.ring_light = neopixel.NeoPixel(board.D10, cfg.RING_LIGHT_COUNT, brightness=cfg.RING_LIGHT_BRIGHTNESS, auto_write=False)
-        self.ring_light[0] = (255,0,0)
-        self.ring_light.show()
+        self.change_ring_light((0,0,0))
     
     def init_optical_density(self) -> None:
         """Initialize the optical density sensors"""
@@ -141,6 +140,7 @@ class Bioreactor():
         """Clean up LED resources"""
         IO.output(self.pin, 0)
         self.stirrer.stop(0)
+        self.change_ring_light((0,0,0))
         IO.cleanup()
 
     def get_led_ref(self) -> List[float]:
