@@ -242,3 +242,12 @@ class Bioreactor():
         finally:
             # Turn IR LEDs off
             self.led_off()
+    
+    def __enter__(self):
+        """Enter the context manager"""
+        return self
+    
+    def __exit__(self, exc_type, exc_value, traceback):
+        """Exit the context manager"""
+        self.finish()
+        return False
