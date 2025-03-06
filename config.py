@@ -37,4 +37,4 @@ class BioreactorConfig:
 
     # Ring Light Configuration
     RING_LIGHT_COUNT: int = 32
-    RING_LIGHT_BRIGHTNESS: float = 0.5
+    RING_LIGHT_BRIGHTNESS: float = 0.05
