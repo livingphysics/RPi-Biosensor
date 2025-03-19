@@ -56,7 +56,7 @@ class Bioreactor():
         if self.board_mode == 'BOARD':
             IO.setmode(IO.BOARD)
         elif self.board_mode == 'BCM':
-            self.pin = cfg.bcm[self.pin]
+            self.pin = cfg.BCM_MAP[self.pin]
             IO.setmode(IO.BCM)
         else:
             raise ValueError("Invalid board mode: use 'BCM' or 'BOARD'")
