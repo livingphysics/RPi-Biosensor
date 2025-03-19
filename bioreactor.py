@@ -7,7 +7,7 @@ from adafruit_ads1x15.analog_in import AnalogIn
 import adafruit_ads7830.ads7830 as ADS_2
 from adafruit_bme280 import basic as adafruit_bme280
 import numpy as np
-import DS18B20
+from ds18b20 import DS18B20
 import logging
 from config import BioreactorConfig as cfg
 import RPi.GPIO as IO

@@ -13,7 +13,8 @@ from utils import (measure_and_write_sensor_data, create_csv_writer,
 bioreactor: Bioreactor = Bioreactor()
 
 # Script start...
-duration: int = 259200  # 72 hrs
+# duration: int = 259200  # 72 hrs
+duration: int = 432000  # 120 hrs
 
 # Prepare data storage for plotting
 times: List[float] = []
@@ -27,7 +28,7 @@ leg: plt.Legend
 fig, ax, live_plots, leg = setup_sensor_plot()
 
 # Main data collection loop
-with open('data/250130_yeast_w303_0.1xypd.csv', 'w', newline='') as csvfile, tqdm(total=duration, desc="Processing: ") as pbar:
+with open('data/250319_yeast_w303_0.1xypd_3e6.csv', 'w', newline='') as csvfile, tqdm(total=duration, desc="Processing: ") as pbar:
     writer = create_csv_writer(csvfile)
     start: float = time.time()
     
