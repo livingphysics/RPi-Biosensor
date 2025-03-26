@@ -21,7 +21,7 @@ class BioreactorConfig:
     BME_COUNT: int = 4
     
     # Sensor Arrays
-    EXTERNAL_SENSOR_ORDER: list[int] = [2, 0, 3, 1]
+    EXTERNAL_SENSOR_ORDER: list[int] = [3, 0, 2, 1]
     
     # I2C Multiplexer
     MUX_ADDRESS: int = 0x70
