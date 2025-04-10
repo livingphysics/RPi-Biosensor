@@ -28,7 +28,7 @@ leg: plt.legend
 fig, ax, live_plots, leg = setup_sensor_plot()
 
 # Main data collection loop
-with open('data/250328_yeast_w303_0.1xypda_3e6.csv', 'w', newline='') as csvfile, tqdm(total=duration, desc="Processing: ") as pbar, Bioreactor() as bioreactor:
+with open('data/250403_yeast_w303_0.1xypda_3e6.csv', 'w', newline='') as csvfile, tqdm(total=duration, desc="Processing: ") as pbar, Bioreactor() as bioreactor:
     writer = create_csv_writer(csvfile)
     start: float = time.time()
 #    ring_light_thread: threading.Thread = threading.Thread(target=ring_light_thread, daemon=True, args=(bioreactor, start))
