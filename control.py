@@ -12,28 +12,14 @@ def ring_light_scheduler(t: float) -> Tuple[int, int, int]:
     Returns:
         Tuple of RGB values (0-255) for red, green, blue
     """
-    # One hour period = 3600 seconds
-    # Map time to position in color wheel (0-360 degrees)
-    angle = (t % 3600) * (360 / 3600)
+    # 12 hour period = 43200 seconds (12 * 3600)
+    # Check if we're in the first 12 hours (on) or second 12 hours (off)
+    cycle_position = t % 43200
     
-    # Convert angle to RGB using HSV->RGB conversion
-    # Hue = angle, Saturation = 1, Value = 1
-    h = angle / 60  # Convert to 0-6 range
-    c = 255  # Chroma = Value * Saturation * 255
-    x = int(c * (1 - abs((h % 2) - 1)))
-    
-    if 0 <= h < 1:
-        return (c, x, 0)
-    elif 1 <= h < 2:
-        return (x, c, 0)
-    elif 2 <= h < 3:
-        return (0, c, x)
-    elif 3 <= h < 4:
-        return (0, x, c)
-    elif 4 <= h < 5:
-        return (x, 0, c)
-    else:  # 5 <= h < 6
-        return (c, 0, x)
+    if cycle_position < 43200 / 2:  # First 12 hours - white light on
+        return (255, 255, 255)  # White illumination
+    else:  # Second 12 hours - lights off
+        return (0, 0, 0)  # All lights off
 
 def ring_light_thread(bioreactor: Bioreactor, start: float) -> None:
     """Thread for updating the ring light"""
