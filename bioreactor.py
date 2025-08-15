@@ -75,6 +75,9 @@ class Bioreactor():
     def init_ring_light(self) -> None:
         """Initialize the ring light"""
         self.ring_light = neopixel.NeoPixel(board.D10, cfg.RING_LIGHT_COUNT, brightness=cfg.RING_LIGHT_BRIGHTNESS, auto_write=False)
+        self.ring_light_state = True  # True = lights should be on, False = lights should be off
+        self.ring_light_override = False  # True = temporarily override the normal schedule
+        self.ring_light_override_color = (0, 0, 0)  # Color to use during override
         self.change_ring_light((0,0,0))
     
     def init_optical_density(self) -> None:
@@ -135,6 +138,27 @@ class Bioreactor():
         else:
             self.ring_light[pixel] = color
         self.ring_light.show()
+    
+    def set_ring_light_override(self, override: bool, color: Tuple[int, int, int] = (0, 0, 0)) -> None:
+        """Set ring light override mode for measurements
+        
+        Args:
+            override: True to override normal schedule, False to resume normal schedule
+            color: Color to use during override (default: off)
+        """
+        self.ring_light_override = override
+        self.ring_light_override_color = color
+        if override:
+            # Immediately apply the override color
+            self.change_ring_light(color)
+    
+    def get_ring_light_state(self) -> bool:
+        """Get current ring light state (True = should be on, False = should be off)"""
+        return self.ring_light_state
+    
+    def set_ring_light_state(self, state: bool) -> None:
+        """Set ring light state (True = should be on, False = should be off)"""
+        self.ring_light_state = state
 
     def finish(self) -> None:
         """Clean up LED resources"""
@@ -242,6 +266,36 @@ class Bioreactor():
         finally:
             # Turn IR LEDs off
             self.led_off()
+    
+    @contextmanager
+    def ring_light_measurement_context(self):
+        """Context manager for ring light control during measurements
+        
+        This context manager:
+        1. Checks if ring lights are currently on
+        2. If on, turns them off during measurement
+        3. If off, leaves them off during measurement
+        4. Restores the previous state after measurement
+        """
+        was_override_active = self.ring_light_override
+        previous_override_color = self.ring_light_override_color
+        
+        try:
+            # Check if ring lights should be on according to schedule
+            if self.get_ring_light_state():
+                # Lights should be on, so turn them off for measurement
+                self.set_ring_light_override(True, (0, 0, 0))
+                time.sleep(settle_time)
+            else:
+                # Lights should be off, so keep them off
+                pass
+            yield
+        finally:
+            # Restore previous override state
+            if was_override_active:
+                self.set_ring_light_override(True, previous_override_color)
+            else:
+                self.set_ring_light_override(False)
     
     def __enter__(self):
         """Enter the context manager"""

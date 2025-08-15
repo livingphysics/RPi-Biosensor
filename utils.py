@@ -55,14 +55,15 @@ def measure_and_write_sensor_data(
         Dict[str, float]: Dictionary containing all sensor readings
     """
     with bioreactor.led_context():
-        ext_temp = bioreactor.get_ext_temp()
-        atm_temp = bioreactor.get_atm_temp()
-        atm_press = bioreactor.get_atm_press()
-        int_temp = bioreactor.get_int_temp()
-        int_press = bioreactor.get_int_press()
-        int_humid = bioreactor.get_int_humid()
-        led_ref = bioreactor.get_led_ref()
-        opt_dens = bioreactor.get_opt_dens()
+        with bioreactor.ring_light_measurement_context():
+            ext_temp = bioreactor.get_ext_temp()
+            atm_temp = bioreactor.get_atm_temp()
+            atm_press = bioreactor.get_atm_press()
+            int_temp = bioreactor.get_int_temp()
+            int_press = bioreactor.get_int_press()
+            int_humid = bioreactor.get_int_humid()
+            led_ref = bioreactor.get_led_ref()
+            opt_dens = bioreactor.get_opt_dens()
         
     data_row = {
         'elapsed': round(elapsed, 3),
