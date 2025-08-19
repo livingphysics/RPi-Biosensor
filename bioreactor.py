@@ -268,7 +268,7 @@ class Bioreactor():
             self.led_off()
     
     @contextmanager
-    def ring_light_measurement_context(self):
+    def ring_light_measurement_context(self, settle_time: float = 1.0):
         """Context manager for ring light control during measurements
         
         This context manager:

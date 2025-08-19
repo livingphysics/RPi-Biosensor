@@ -13,7 +13,7 @@ def ring_light_scheduler(t: float) -> Tuple[int, int, int]:
         Tuple of RGB values (0-255) for red, green, blue
     """
     PERIOD = 43200
-    # PERIOD = 20 
+    # PERIOD = 180 
     # 12 hour period = 43200 seconds (12 * 3600)
     # Check if we're in the first 12 hours (on) or second 12 hours (off)
     cycle_position = t % PERIOD
