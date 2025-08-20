@@ -18,7 +18,7 @@ duration: int = 1296000  # 1296000
 
 # Prepare data storage for plotting
 times: List[float] = []
-sensor_data: List[List[float]] = [[] for _ in range(30)]
+sensor_data: List[List[float]] = [[] for _ in range(22)]
 
 # Set up the plot
 fig: Figure

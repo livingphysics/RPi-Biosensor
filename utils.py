@@ -99,27 +99,22 @@ def setup_sensor_plot() -> Tuple[Figure, List[Axes], List[Line2D], Legend]:
     plt.ion()  # Turn on interactive mode
     fig = plt.figure(figsize=(12, 10))
     
-    # Create 4 subplots
+    # Create 3 subplots
     axes: List[Axes] = []
     # Adjust the width ratio between the plot and legend area
-    gs = plt.GridSpec(4, 2, width_ratios=[3, 1])  # 3:1 ratio between plot and legend
+    gs = plt.GridSpec(3, 2, width_ratios=[3, 1])  # 3:1 ratio between plot and legend
     
-    # Temperature subplot (internal, external, atmospheric)
+    # Temperature subplot (external, atmospheric)
     ax_temp: Axes = fig.add_subplot(gs[0, 0])
     # Pressure subplot (internal, atmospheric)
     ax_press: Axes = fig.add_subplot(gs[1, 0])
     # Optical measurements subplot (optical density and LED reference)
     ax_opt: Axes = fig.add_subplot(gs[2, 0])
-    # Humidity subplot (all internal humidity sensors)
-    ax_humid: Axes = fig.add_subplot(gs[3, 0])
     
-    axes = [ax_temp, ax_press, ax_opt, ax_humid]
+    axes = [ax_temp, ax_press, ax_opt]
     live_plots: List[Line2D] = []
 
-    # Temperature plots
-    for i in range(4):
-        line, = ax_temp.plot([], [], label=f'Internal Temp {i+1}')
-        live_plots.append(line)
+    # Temperature plots (external and atmospheric only)
     for i in range(4):
         line, = ax_temp.plot([], [], label=f'External Temp {i+1}')
         live_plots.append(line)
@@ -147,13 +142,8 @@ def setup_sensor_plot() -> Tuple[Figure, List[Axes], List[Line2D], Legend]:
     ax_opt.set_ylabel('Voltage')
     ax_opt.grid(True)
 
-    # Humidity plots
-    for i in range(4):
-        line, = ax_humid.plot([], [], label=f'Internal Humidity {i+1}')
-        live_plots.append(line)
-    ax_humid.set_ylabel('Humidity (%)')
-    ax_humid.set_xlabel('Time (s)')
-    ax_humid.grid(True)
+    # Set x-label on the bottom subplot (optical measurements)
+    ax_opt.set_xlabel('Time (s)')
 
     # Adjust layout to prevent overlap
     # plt.tight_layout()  # Remove this line
@@ -215,35 +205,29 @@ def update_sensor_plot(
         data_row: dictionary containing current sensor readings
     """
     # Update all sensor values using the correct keys
-    # Internal temperature (4 sensors)
-    for i in range(4):
-        sensor_data[i].append(data_row[f'int_temp{i+1}'])
-    
     # External temperature (4 sensors)
     for i in range(4):
-        sensor_data[i+4].append(data_row[f'ext_temp{i+1}'])
+        sensor_data[i].append(data_row[f'ext_temp{i+1}'])
     
     # Atmospheric temperature
-    sensor_data[8].append(data_row['atm_temp'])
+    sensor_data[4].append(data_row['atm_temp'])
     
     # Internal pressure (4 sensors)
     for i in range(4):
-        sensor_data[i+9].append(data_row[f'int_press{i+1}'])
+        sensor_data[i+5].append(data_row[f'int_press{i+1}'])
     
     # Atmospheric pressure
-    sensor_data[13].append(data_row['atm_press'])
+    sensor_data[9].append(data_row['atm_press'])
     
     # Optical density (8 sensors)
     for i in range(8):
-        sensor_data[i+14].append(data_row[f'opt_dens{i+1}'])
+        sensor_data[i+10].append(data_row[f'opt_dens{i+1}'])
     
     # LED reference (4 sensors)
     for i in range(4):
-        sensor_data[i+22].append(data_row[f'led_ref{i+1}'])
+        sensor_data[i+18].append(data_row[f'led_ref{i+1}'])
     
-    # Internal humidity (4 sensors)
-    for i in range(4):
-        sensor_data[i+26].append(data_row[f'int_humid{i+1}'])
+
 
     # Update plot lines
     for i, line in enumerate(live_plots):
