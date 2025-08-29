@@ -207,7 +207,7 @@ def update_sensor_plot(
     # Update all sensor values using the correct keys
     # External temperature (4 sensors)
     for i in range(4):
-        sensor_data[i].append(data_row[f'ext_temp{i+1}'])
+        sensor_data[i].append(data_row[f'int_temp{i+1}'])
     
     # Atmospheric temperature
     sensor_data[4].append(data_row['atm_temp'])
