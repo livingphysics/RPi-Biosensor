@@ -231,7 +231,7 @@ def update_sensor_plot(
 
     # Update plot lines
     for i, line in enumerate(live_plots):
-        line.set_data(times, sensor_data[i])
+        line.set_data(times/3600, sensor_data[i])
     
     # Update all subplots
     for ax in axes:
