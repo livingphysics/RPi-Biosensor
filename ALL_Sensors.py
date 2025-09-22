@@ -28,7 +28,7 @@ leg: plt.legend
 fig, ax, live_plots, leg = setup_sensor_plot()
 
 # Main data collection loop
-with open('data/250914_naive_galhis_red_csm-his-leu-glu.csv', 'w', newline='') as csvfile, tqdm(total=duration, desc="Processing: ") as pbar, Bioreactor() as bioreactor:
+with open('data/250919_naive_galhis_yellow_frozen_csm-his-leu-glu.csv', 'w', newline='') as csvfile, tqdm(total=duration, desc="Processing: ") as pbar, Bioreactor() as bioreactor:
     writer = create_csv_writer(csvfile)
     start: float = time.time()
  #   ring_light_thread: threading.Thread = threading.Thread(target=ring_light_thread, daemon=True, args=(bioreactor, start))
