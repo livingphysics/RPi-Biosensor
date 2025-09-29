@@ -143,7 +143,7 @@ def setup_sensor_plot() -> Tuple[Figure, List[Axes], List[Line2D], Legend]:
     ax_opt.grid(True)
 
     # Set x-label on the bottom subplot (optical measurements)
-    ax_opt.set_xlabel('Time (s)')
+    ax_opt.set_xlabel('Time (h)')
 
     # Adjust layout to prevent overlap
     # plt.tight_layout()  # Remove this line
